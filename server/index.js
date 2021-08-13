@@ -1,12 +1,16 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const path = require("path");
 
+// use cors
+app.use(cors());
 // use the bodyparser as a middleware
 app.use(bodyParser.json());
 // set port for the app to listen on
-app.set("port", process.env.PORT || 3001);
+app.set("port", process.env.NODE_PORT || 3001);
 // set path to serve static files
 app.use(express.static(path.join(__dirname, "../client/public")));
 // enable CORS
