@@ -1,4 +1,25 @@
-function checkConnection(esclient) {
+require("dotenv").config();
+const { Client }     = require("@elastic/elasticsearch");
+const elasticUrl     = process.env.ELASTIC_URL || "http://localhost:9200";
+const esclient       = new Client({ node: elasticUrl });
+const citiesIndex    = "cities";
+const citiesType     = "cities";
+
+async function createIndex(index) {
+  try {
+
+    await esclient.indices.create({ index });
+    console.log(`Created index ${index}`);
+
+  } catch (err) {
+
+    console.error(`An error occurred while creating the index ${index}:`);
+    console.error(err);
+
+  }
+}
+
+function checkConnection() {
   return new Promise(async (resolve) => {
 
     console.log("Checking connection to ElasticSearch...");
@@ -22,5 +43,9 @@ function checkConnection(esclient) {
 }
 
 module.exports = {
+  citiesIndex,
+  citiesType,
+  elasticUrl,
+  createIndex,
   checkConnection,
 };
