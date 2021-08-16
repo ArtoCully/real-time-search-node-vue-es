@@ -7,4 +7,3 @@ COPY . ./
 EXPOSE 3001
 EXPOSE 9200
 CMD npm run start
-

@@ -1,9 +1,10 @@
 require("dotenv").config();
+const cities         = require("../data/cities.json");
 const { Client }     = require("@elastic/elasticsearch");
 const elasticUrl     = process.env.ELASTIC_URL || "http://localhost:9200";
 const esclient       = new Client({ node: elasticUrl });
 const citiesIndex    = "cities";
-const citiesType     = "cities";
+const citiesType     = "cities_list";
 
 async function createIndex(index) {
   try {
@@ -17,6 +18,47 @@ async function createIndex(index) {
     console.error(err);
 
   }
+}
+
+async function setMapping ({
+  schema,
+  index,
+  type
+}) {
+  try {
+    await esclient.indices.putMapping({ 
+      index,
+      type,
+      include_type_name: true,
+      body: {
+        properties: schema
+      }
+    });
+
+    console.log(`${index} mapping created successfully`);
+
+  } catch (err) {
+    console.error(`An error occurred while setting the ${index} mapping:`);
+    console.error(err);
+  }
+}
+
+async function populateEsWithData({ index, type, data }) {
+  const esAction = {
+    index: {
+      _index: index,
+      _type: type
+    }
+  };
+
+  const docs = [];
+
+  for (const d of data) {
+    docs.push(esAction);
+    docs.push(data);
+  }
+
+  return esclient.bulk({ body: docs });
 }
 
 function checkConnection() {
@@ -45,7 +87,10 @@ function checkConnection() {
 module.exports = {
   citiesIndex,
   citiesType,
+  esclient,
   elasticUrl,
   createIndex,
   checkConnection,
+  setMapping,
+  populateEsWithData,
 };
