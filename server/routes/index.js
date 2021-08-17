@@ -1,8 +1,7 @@
-const express    = require("express");
-const routes     = express.Router();
+const express              = require("express");
+const routes               = express.Router();
+const controller           = require("../controller");
 
-routes.route("/search").get((req, res) => {
-  res.json({ success: true, data: {} });
-});
+routes.get("/search", controller.getCitiesByQuery);
 
 module.exports = routes;
