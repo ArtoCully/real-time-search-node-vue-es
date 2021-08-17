@@ -1,6 +1,9 @@
 const server  = require('./');
 const elastic = require('./elasticsearch');
-const cities = require('./cities.json');
+const fs = require('fs');
+const StreamArray = require( 'stream-json/streamers/StreamArray');
+const fileStream = fs.createReadStream('../data/cities.json');
+const jsonStream = StreamArray.withParser();
 
 (async() => {
   const isElasticReady = await elastic.checkConnection();
@@ -34,8 +37,9 @@ const cities = require('./cities.json');
       await elastic.populateEsWithData({
         index: elastic.citiesIndex,
         type: elastic.citiesType,
-        data: cities,
-      });
+        fileStream,
+        jsonStream,
+      })
     }
   
     server.start();

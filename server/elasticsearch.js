@@ -1,5 +1,4 @@
 require("dotenv").config();
-const cities         = require("../data/cities.json");
 const { Client }     = require("@elastic/elasticsearch");
 const elasticUrl     = process.env.ELASTIC_URL || "http://localhost:9200";
 const esclient       = new Client({ node: elasticUrl });
@@ -43,7 +42,7 @@ async function setMapping ({
   }
 }
 
-async function populateEsWithData({ index, type, data }) {
+async function populateEsWithData({ index, type, fileStream, jsonStream }) {
   const esAction = {
     index: {
       _index: index,
@@ -53,12 +52,22 @@ async function populateEsWithData({ index, type, data }) {
 
   const docs = [];
 
-  for (const d of data) {
-    docs.push(esAction);
-    docs.push(data);
-  }
+  try {
+    fileStream.pipe(jsonStream.input);
 
-  return esclient.bulk({ body: docs });
+    jsonStream.on('data', ({key, value}) => {
+      console.log(key, value);
+      docs.push(esAction);
+      docs.push(value);
+    });
+
+    jsonStream.on('end', () => {
+      console.log('Successfully streamed data');
+      esclient.bulk({ body: docs });
+    });
+  } catch (err) {
+    console.error('An error occured while populating ES Data', err);
+  }
 }
 
 function checkConnection() {
