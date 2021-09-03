@@ -1,3 +1,5 @@
 export default {
   FETCH_CITIES: 'FETCH_CITIES',
+  LOADING_ON: 'LOADING_ON',
+  LOADING_OFF: 'LOADING_OFF',
 }
