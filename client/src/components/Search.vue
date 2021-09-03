@@ -7,6 +7,8 @@
           <input type="text" class="w-96 drop-shadow-md" name="search__form-input" id="search__form-input" placeholder="Start typing" v-model="query" >
           <span class="glyphicon glyphicon-search form-control-feedback"></span>
       </div>
+      <div v-if="loading">Loading...</div> <!-- TODO: create loading component -->
+      <div v-if="error">{{ error.message }}</div> <!-- TODO: create an error alert component -->
       <div class="max-w-lg m-auto" v-for="(result, index) in results" :key="index">
         <div class="panel panel-default border-b p-1">
             <h3 class="panel-heading text-lg mt-0 mb-2">
@@ -24,37 +26,32 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   name: 'Search',
   data() {
     return {
-      results: [],
       query: '',
     }
   },
   methods: {
-    search: function() {
-      console.log(`client search query = ${JSON.stringify(this.query)}`)
-
-      if (this.query) {
-        axios
-          .get("http://127.0.0.1:3001/v1/search?q=" + this.query)
-          .then(response => {
-              this.results = response.data.data.values;
-              console.log('response', response);
-              console.log('this.result', this.results);
-          });
-      } else {
-        this.results = [];
-      }
-    }
+    ...mapActions({
+      search: 'searchCities',
+    }),
   },
   watch: {
-    query: function() {
-      this.search();
+    query: function(value) {
+      console.log('value', value);
+      this.search(value);
     }
+  },
+  computed: {
+    ...mapState({
+      loading: state => state.loading,
+      results: state => state.cities,
+      error: state => state.error,
+    })
   }
 }
 </script>
