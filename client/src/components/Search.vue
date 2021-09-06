@@ -9,27 +9,20 @@
       </div>
       <div v-if="loading">Loading...</div> <!-- TODO: create loading component -->
       <div v-if="error">{{ error.message }}</div> <!-- TODO: create an error alert component -->
-      <div class="max-w-lg m-auto" v-for="(result, index) in results" :key="index">
-        <div class="panel panel-default border-b p-1">
-            <h3 class="panel-heading text-lg mt-0 mb-2">
-              <!-- display the city name and country  -->
-              {{ result.name }}, {{ result.country }}
-            </h3>
-            <div class="panel-body">
-              <!-- display the latitude and longitude of the city  -->
-              <p>lat:{{ result.lat }}, long: {{ result.lng }}.</p>
-            </div>
-        </div>
-      </div>
+      <search-list :results="results"></search-list>
     </form>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import SearchList from './SearchList';
 
 export default {
   name: 'Search',
+  components: {
+    SearchList,
+  },
   data() {
     return {
       query: '',
