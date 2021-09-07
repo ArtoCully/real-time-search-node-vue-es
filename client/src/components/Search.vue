@@ -9,8 +9,8 @@
       </div>
       <div v-if="loading">Loading...</div> <!-- TODO: create loading component -->
       <div v-if="error">{{ error.message }}</div> <!-- TODO: create an error alert component -->
-      <search-list :results="results"></search-list>
     </form>
+    <search-list :results="results"></search-list>
   </div>
 </template>
 
