@@ -5,8 +5,8 @@
       :modelValue="query"
       @update:modelValue="captureSearchQuery"
     ></search-form>
-    <div v-if="loading">Loading...</div> <!-- TODO: create loading component -->
-    <div v-if="error">{{ error.message }}</div> <!-- TODO: create an error alert component -->
+    <div class="search__loading" v-if="loading">Loading...</div> <!-- TODO: create loading component -->
+    <div class="search__error" v-if="error">{{ error.message }}</div> <!-- TODO: create an error alert component -->
     <search-list :results="results"></search-list>
   </div>
 </template>
